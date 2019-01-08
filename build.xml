@@ -5,7 +5,7 @@
     <!-- =================================================================== -->
 
     <!-- 源代码src路径 -->
-    <property name="src.path" value="src/java"/>
+    <property name="src.path" value="src/main/java"/>
     <!-- 单元测试代码路径 -->
     <property name="test.path" value="src/test"/>
     <!-- 编译文件class路径 -->
