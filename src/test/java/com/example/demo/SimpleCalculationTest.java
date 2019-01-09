@@ -16,17 +16,17 @@ public class SimpleCalculationTest {
     SimpleCalculation sc;
 
     @Test
-    public void AddTest() {
+    public void addTest() {
 
-        int c = sc.Add(3, 5);
+        int c = sc.add(3, 5);
 
         Assert.assertEquals(8, c);
     }
 
     @Test
-    public void SubtrationTest() {
+    public void subtrationTest() {
 
-        int c = sc.Subtration(20, 5);
+        int c = sc.subtration(20, 5);
 
         Assert.assertEquals(15, c);
     }
