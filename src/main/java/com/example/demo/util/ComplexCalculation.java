@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ComplexCalculation {
 
-    public int Division(int a, int b) {
+    public int division(int a, int b) {
         return (a / b);
     }
 
-    public int Multiply(int a, int b) {
+    public int multiply(int a, int b) {
         return (a * b);
     }
 }

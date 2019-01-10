@@ -16,17 +16,17 @@ public class ComplexCalculationTest {
     ComplexCalculation cc;
 
     @Test
-    public void DivisionTest() {
+    public void divisionTest() {
 
-        int c = cc.Division(100, 5);
+        int c = cc.division(100, 5);
 
         Assert.assertEquals(20, c);
     }
 
     @Test
-    public void MultiplyTest() {
+    public void multiplyTest() {
 
-        int c = cc.Multiply(100, 5);
+        int c = cc.multiply(100, 5);
 
         Assert.assertEquals(500, c);
     }
