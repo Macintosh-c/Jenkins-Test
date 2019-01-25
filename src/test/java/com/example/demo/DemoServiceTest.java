@@ -1,7 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.util.SimpleCalculation;
-import org.junit.Assert;
+import com.example.demo.service.DemoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +9,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SimpleCalculationTest {
-
+public class DemoServiceTest {
     @Autowired
-    SimpleCalculation sc;
+    DemoService demoService;
+
 
     @Test
-    public void addTest() {
-
-        int c = sc.add(3, 5);
-
-        Assert.assertEquals(8, c);
+    public void queryTest(){
+        demoService.query(2);
     }
 
     @Test
-    public void subtrationTest() {
-
-
-        int c = sc.subtration(20, 5);
-
-        Assert.assertEquals(15, c);
+    public void ipdateTest(){
+        demoService.update(2);
     }
+
 }
