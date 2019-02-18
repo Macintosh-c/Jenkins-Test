@@ -1,6 +1,7 @@
 node('Java'){
    def mvnHome
    def SonarQubeHome
+   def version='V'+sh(script:"date +%Y%m%d%H%M%S",returnStdout: true).trim()
    stage('获取最新代码') { // for display purposes
       // Get some code from a GitHub repository
       git branch:'uat',url: 'https://github.com/Macintosh-c/Jenkins-Test.git'
@@ -9,6 +10,7 @@ node('Java'){
       // **       in the global configuration.
       mvnHome = tool 'maven'
       SonarQubeHome = tool 'SonarQube'
+
    }
 
    stage('单元测试并生成报告') {
@@ -22,7 +24,7 @@ node('Java'){
       junit keepLongStdio: true, testResults: 'target/surefire-reports/*.xml'
    }
    stage('sonar代码检测并生成报告') {
-       sh "'${SonarQubeHome}/bin/sonar-scanner' -Dsonar.host.url=http://172.16.98.166:9000 -Dsonar.login=admin -Dsonar.password=admin -Dsonar.java.binaries=target -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src -Dsonar.projectKey=SonarTestdemo -Dsonar.projectName=SonarTestdemo -Dsonar.core.codeCoveragePlugin=jacoco -Dsonar.jacoco.reportPaths=target/jacoco.exec -Dsonar.projectVersion=2.0"
+       sh "'${SonarQubeHome}/bin/sonar-scanner' -Dsonar.host.url=http://172.16.98.166:9000 -Dsonar.login=admin -Dsonar.password=admin -Dsonar.java.binaries=target -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src -Dsonar.projectKey=SonarTestdemo -Dsonar.projectName=SonarTestdemo -Dsonar.core.codeCoveragePlugin=jacoco -Dsonar.jacoco.reportPaths=target/jacoco.exec -Dsonar.projectVersion=${version}"
      //sh "'${mvnHome}/bin/mvn' sonar:sonar -Dsonar.host.url=http://172.16.98.166:9000 -Dsonar.login=admin -Dsonar.password=admin -Dsonar.java.binaries=target -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src/main/java -Dsonar.projectKey=SonarTestdemo -Dsonar.projectName=SonarTestdemo -Dsonar.core.codeCoveragePlugin=jacoco -Dsonar.jacoco.reportPaths=target/jacoco.exec -Dsonar.projectVersion=1.0"
      //  if (isUnix()) {
      //    sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
@@ -56,11 +58,13 @@ node('Java'){
 //echo \'5\'''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
    }
     stage('Push DockerImage') {
-//sshPublisher(publishers: [sshPublisherDesc(configName: '172.16.98.177', sshCredentials: [encryptedPassphrase: '{AQAAABAAAAAQ5J1/Lk/lGsR/cF52tNizj3f9D5O/7iJdDmVEso2/2kE=}', key: '', keyPath: '', username: 'root'], transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/crsys/', remoteDirectorySDF: false, removePrefix: 'docker/', sourceFiles: 'docker/Dockerfile'), sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/crsys/', remoteDirectorySDF: false, removePrefix: 'crsys-main/target/', sourceFiles: 'crsys-main/target/crsys-main.jar'), sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /opt/nielsen/crsys/
-//docker login --username=kaishen --password=Softtek.2019 172.16.98.177
-//docker build -t nielsen-crsys .
-//docker tag nielsen-crsys 172.16.98.177/nielsen/crsys:latest
-//docker push 172.16.98.177/nielsen/crsys:latest''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+sshPublisher(publishers: [sshPublisherDesc(configName: '172.16.98.177', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/demo', remoteDirectorySDF: false, removePrefix: 'docker/', sourceFiles: 'docker/Dockerfile'), sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /opt/nielsen/demo
+docker login --username=kaishen --password=Softtek.2019 172.16.98.177
+docker build -t demo-jenkins .
+export demo_version="V`date +%Y%m%d%H%M%S`"
+docker tag demo-jenkins 172.16.98.177/nielsen/test:$demo_version
+docker push 172.16.98.177/nielsen/test:$demo_version
+docker rmi 172.16.98.177/nielsen/test:$demo_version''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/demo', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/demo-jenkins.jar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 
    }
 }
