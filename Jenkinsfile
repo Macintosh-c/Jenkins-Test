@@ -61,12 +61,17 @@ node('Java'){
 sshPublisher(publishers: [sshPublisherDesc(configName: '172.16.98.177', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/demo', remoteDirectorySDF: false, removePrefix: 'docker/', sourceFiles: 'docker/Dockerfile'), sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /opt/nielsen/demo
 docker login --username=kaishen --password=Softtek.2019 172.16.98.177
 docker build -t demo-jenkins .
-docker tag demo-jenkins 172.16.98.177/nielsen/test:latest
-docker push 172.16.98.177/nielsen/test:latest''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/demo', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/demo-jenkins.jar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-
-//export demo_version="V`date +%Y%m%d%H%M%S`"
-//docker tag demo-jenkins 172.16.98.177/nielsen/test:$demo_version
-//docker push 172.16.98.177/nielsen/test:$demo_version
-//docker rmi 172.16.98.177/nielsen/test:$demo_version
+export demo_version="V`date +%Y%m%d%H%M%S`"
+echo $demo_version>v.txt
+docker tag demo-jenkins 172.16.98.177/nielsen/test:$demo_version
+docker push 172.16.98.177/nielsen/test:$demo_version
+docker rmi 172.16.98.177/nielsen/test:$demo_version''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/opt/nielsen/demo', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/demo-jenkins.jar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
    }
+
+      stage('k8s deploy') {
+sshPublisher(publishers: [sshPublisherDesc(configName: '172.16.98.177', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /opt/nielsen/demo
+export demo_version=$(cat v.txt)
+sed -i "20s/test:.*/test:$demo_version/" deploy-demo.yaml
+kubectl apply -f deploy-demo.yaml''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+      }
 }
