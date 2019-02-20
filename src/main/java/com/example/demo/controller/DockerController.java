@@ -31,4 +31,9 @@ public class DockerController {
         logger.info("Hello haha World:{}",accountInfo.getName());
         return accountInfo;
     }
+    @PostMapping("/xixi")
+    public AccountInfo xixi(@RequestBody AccountInfo accountInfo){
+        logger.info("Hello xixi World:{}",accountInfo.getName());
+        return accountInfo;
+    }
 }
